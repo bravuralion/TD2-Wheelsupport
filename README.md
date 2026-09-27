@@ -1,6 +1,8 @@
 # G29 Fahrschalter für Train Driver 2 – Anleitung
 
-Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
+Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die polnischen E-Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
+
+Du musst nichts programmieren. Einmal einrichten, danach reicht ein Doppelklick.
 
 ---
 
@@ -10,6 +12,7 @@ Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für
 - Logitech G29 (G923 sollte auch gehen)
 - **Logitech G HUB** installiert und gestartet (die normale Lenkrad-Software von Logitech)
 - Train Driver 2
+- **HidHide** (kostenlos, siehe Schritt 5) – versteckt das Rad vor TD2
 - Einmalig Internet für die Installation
 
 ## 2. Python installieren (einmalig)
@@ -30,18 +33,36 @@ Lege diese drei Dateien zusammen in einen Ordner, z. B. `C:\G29-TD2\`:
 
 - `Start.bat` – zum Starten doppelklicken
 - `g29_detent_test.py` – das eigentliche Programm
+- `Anleitung.md` – diese Anleitung
 
 ## 4. G HUB einstellen
 
 Öffne G HUB, wähle das G29 und stelle ein:
 
-- **Lenkbereich (Operating Range): 400°** – Ich habs zumindest mit 400 getestet und bin so happy damit.
+- **Lenkbereich (Operating Range): 900°** – je größer, desto mehr Platz haben die Stufen
 - **Force Feedback / Kraftrückmeldung: 100 %**
 - Zentrierfeder (Centering Spring) **aus**, falls vorhanden
 
 G HUB muss beim Spielen im Hintergrund laufen.
 
-## 5. Starten
+## 5. HidHide einrichten (einmalig, wichtig!)
+
+Train Driver 2 liest das Lenkrad heimlich mit – und setzt den Fahrschalter auf 0, sobald das Spielfenster den Fokus verliert (z. B. ein Klick in den Browser), wenn das Rad gerade nicht in der Mitte steht. Deshalb verstecken wir das G29 vor TD2. Unser Programm darf es weiterhin sehen. Dafür gibt es das kostenlose Werkzeug **HidHide**.
+
+1. HidHide herunterladen: **https://github.com/nefarius/HidHide/releases** – die neueste `HidHide_x.x.x_x64.exe` nehmen, installieren, PC neu starten.
+2. `Start.bat` einmal ausführen. In der zweiten Zeile steht `Python: C:\...\python.exe` – diesen Pfad merken (oder gleich `Start.bat` offen lassen).
+3. **HidHide Configuration Client** starten (im Startmenü).
+4. Reiter **Applications**: auf **+** klicken und diese Programme hinzufügen – sie dürfen das Rad weiterhin sehen:
+   - die `python.exe` aus Schritt 2
+   - G HUB: `C:\Program Files\LGHUB\lghub.exe` und `lghub_agent.exe` (im selben Ordner)
+5. Reiter **Devices**: bei **Logitech G29 Driving Force Racing Wheel** (kann mehrfach auftauchen – alle) den Haken setzen. Ganz unten **"Enable device hiding"** anhaken.
+6. Fenster schließen. TD2 ggf. neu starten.
+
+Ab jetzt ist das G29 für TD2 unsichtbar, Windows-Spiele und unser Programm sehen es trotzdem. Zum Prüfen: `Start.bat` starten – das Rad muss weiterhin gefunden werden und einrasten. Und in TD2 darf der Fahrschalter jetzt beim Klick in den Browser stehen bleiben.
+
+Willst du das Rad später in einem anderen Spiel (z. B. einem Rennspiel) benutzen, dieses Spiel einfach ebenfalls unter **Applications** eintragen – oder "Enable device hiding" vorübergehend abhaken.
+
+## 6. Starten
 
 1. Lenkrad anstecken, G HUB läuft.
 2. Train Driver 2 starten und in die Lok einsteigen.
@@ -53,17 +74,17 @@ Es öffnet sich ein schwarzes Textfenster. Das bleibt die ganze Zeit offen, du k
 
 Wenn du das Rad drehst, sollte es jetzt spürbar einrasten.
 
-## 6. Rad und Spiel abgleichen (Resync)
+## 7. Rad und Spiel abgleichen (Resync)
 
 Das Programm weiß nicht, wo der Fahrschalter in der Lok gerade steht. Deshalb drückst du nach dem Start einmal den **Resync-Knopf** (Knopf 3 am Lenkrad, meist die Dreieck-Taste):
 
 - Das Rad dreht sich von selbst ganz nach links auf Stufe 0. **Rad dabei loslassen!**
 - Gleichzeitig wird der Fahrschalter im Spiel auf 0 gefahren.
-- Die LED-Leiste blinkt kurz wenn abgeschlossen.
+- Die LED-Leiste blinkt kurz, danach passt alles zusammen.
 
-Es kann sein das das Lenkrad nicht komplett in Stufe 0 einrastet, dann einfach manuell in 0 bringen.
+Immer wenn Rad und Spiel auseinandergelaufen sind (z. B. nach einem Lokwechsel), einfach wieder Resync drücken.
 
-## 7. Lok wechseln
+## 8. Lok wechseln
 
 Jede Lok hat eine andere Zahl von Stufen. Zum Wechseln:
 
@@ -76,7 +97,7 @@ Dann wieder zurück ins Spiel.
 
 Vorhandene Loks: **EP09**, **ET22**, **EP08/EP07**, **ST44**. Beim Start ist die EP09 aktiv.
 
-## 8. Knöpfe am Lenkrad
+## 9. Knöpfe am Lenkrad
 
 | Knopf | Funktion / Taste |
 |------:|------------------|
@@ -97,19 +118,22 @@ Welche Knopfnummer welcher Taste am Rad entspricht, siehst du im Textfenster: Je
 
 Die LED-Leiste zeigt die Feldschwächung: eine LED pro Stufe. Beim ET22 (6 Stufen) blinkt bei Stufe 6 zusätzlich die rote LED.
 
-## 9. Gut zu wissen
+## 10. Gut zu wissen
 
 - Tasten werden **nur ans Spiel geschickt, wenn Train Driver 2 im Vordergrund ist.** Bist du gerade im Browser und drehst am Rad, holt das Programm TD2 automatisch nach vorne und schickt die Tasten dann nach.
 - Das Programm muss nicht als Administrator laufen – außer TD2 läuft selbst als Administrator, dann muss `Start.bat` es auch (Rechtsklick → Als Administrator ausführen).
 - Beenden: Textfenster schließen oder darin Strg+C drücken.
 
-## 10. Wenn etwas nicht geht
+## 11. Wenn etwas nicht geht
 
 **"Python wurde nicht gefunden"**
 Python ist nicht installiert oder der PATH-Haken fehlte. Siehe Schritt 2.
 
 **"Kein Gerät mit Force Feedback gefunden"**
-Lenkrad nicht angesteckt oder G HUB läuft nicht. G HUB starten, Rad kurz ab- und wieder anstecken, `Start.bat` neu starten.
+Lenkrad nicht angesteckt oder G HUB läuft nicht. G HUB starten, Rad kurz ab- und wieder anstecken, `Start.bat` neu starten. Falls HidHide eingerichtet ist: Fast immer ist dann eine falsche `python.exe` unter "Applications" eingetragen. Die richtige zeigt `Start.bat` in der zweiten Zeile an – Pfad vergleichen, alten Eintrag löschen, neuen hinzufügen, `Start.bat` neu starten.
+
+**Fahrschalter springt auf 0, wenn ich aus TD2 rausklicke**
+HidHide ist nicht aktiv oder das G29 ist dort nicht angehakt. Siehe Schritt 5. TD2 nach Änderungen in HidHide neu starten.
 
 **"Gerät meldet keinen Spring-Effekt"**
 G HUB läuft nicht, oder ein anderes Programm (z. B. ein Rennspiel) hat das Force Feedback belegt. Andere Programme schließen.
