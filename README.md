@@ -1,14 +1,12 @@
 # G29 Fahrschalter für Train Driver 2 – Anleitung
 
-Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die polnischen E-Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
-
-Du musst nichts programmieren. Einmal einrichten, danach reicht ein Doppelklick.
+Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die E-Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
 
 ---
 
 ## 1. Was du brauchst
 
-- Windows 10 oder 11
+- Windows 11
 - Logitech G29 (G923 sollte auch gehen)
 - **Logitech G HUB** installiert und gestartet (die normale Lenkrad-Software von Logitech)
 - Train Driver 2
@@ -29,25 +27,24 @@ Falls du den Haken vergessen hast: Python deinstallieren (Windows-Einstellungen 
 
 ## 3. Programm-Ordner
 
-Lege diese drei Dateien zusammen in einen Ordner, z. B. `C:\G29-TD2\`:
+Lege diese Dateien zusammen in einen Ordner, z. B. `C:\G29-TD2\`:
 
 - `Start.bat` – zum Starten doppelklicken
 - `g29_detent_test.py` – das eigentliche Programm
-- `Anleitung.md` – diese Anleitung
 
 ## 4. G HUB einstellen
 
 Öffne G HUB, wähle das G29 und stelle ein:
 
-- **Lenkbereich (Operating Range): 900°** – je größer, desto mehr Platz haben die Stufen
+- **Lenkbereich (Operating Range): 400°** –
 - **Force Feedback / Kraftrückmeldung: 100 %**
 - Zentrierfeder (Centering Spring) **aus**, falls vorhanden
 
 G HUB muss beim Spielen im Hintergrund laufen.
 
-## 5. HidHide einrichten (einmalig, wichtig!)
+## 5. HidHide einrichten (einmalig)
 
-Train Driver 2 liest das Lenkrad heimlich mit – und setzt den Fahrschalter auf 0, sobald das Spielfenster den Fokus verliert (z. B. ein Klick in den Browser), wenn das Rad gerade nicht in der Mitte steht. Deshalb verstecken wir das G29 vor TD2. Unser Programm darf es weiterhin sehen. Dafür gibt es das kostenlose Werkzeug **HidHide**.
+Train Driver 2 liest das Lenkrad mit – und setzt den Fahrschalter auf 0, sobald das Spielfenster den Fokus verliert (z. B. ein Klick in den Browser), wenn das Rad gerade nicht in der Mitte steht. Deshalb verstecken wir das G29 vor TD2. Unser Programm darf es weiterhin sehen. Dafür gibt es das kostenlose Werkzeug **HidHide**.
 
 1. HidHide herunterladen: **https://github.com/nefarius/HidHide/releases** – die neueste `HidHide_x.x.x_x64.exe` nehmen, installieren, PC neu starten.
 2. `Start.bat` einmal ausführen. In der zweiten Zeile steht `Python: C:\...\python.exe` – diesen Pfad merken (oder gleich `Start.bat` offen lassen).
