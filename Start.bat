@@ -19,6 +19,12 @@ if errorlevel 1 (
     exit /b 1
 )
 
+for /f "delims=" %%p in ('python -c "import sys; print(sys.executable)"') do (
+    echo Python: %%p
+    echo (GENAU diesen Pfad in HidHide unter "Applications" eintragen - siehe Anleitung, Schritt 5)
+)
+echo.
+
 REM ---- Abhaengigkeiten pruefen, bei Bedarf installieren ----
 python -c "import sdl2, hid" >nul 2>nul
 if errorlevel 1 (
