@@ -40,15 +40,10 @@ LOCOS = {
         "shunt": 5,                        # bitte prüfen
     },
     "ST44": {
-        "steps": 16,                       # Positionen 0 .. 14 (Leerlauf + 14 Fahrstufen)
-        "heavy": {0: 2.2},                 # nur 0 <-> 1
-        "shunt": 0,                        # keine Zwischenstufen
-    },
-    "SU45": {
         "steps": 15,                       # Positionen 0 .. 14 (Leerlauf + 14 Fahrstufen)
         "heavy": {0: 2.2},                 # nur 0 <-> 1
         "shunt": 0,                        # keine Zwischenstufen
-    },    
+    },
 }
 DEFAULT_LOCO = "EP09"
 MENU_KEY = "m"        # Taste im Konsolenfenster, die das Lok-Menü öffnet
@@ -69,7 +64,8 @@ INVERT = False        # True, falls das Rad von der Stufe WEG gedrückt wird
 RATE_HZ = 200         # Abfragerate der Position (nur für Stufenwechsel relevant)
 
 SEND_KEYS = True      # Tastendruck ans Spiel schicken (False = nur Konsolenausgabe)
-KEY_HOLD = 0.03       # Sekunden, die die Taste gedrückt bleibt
+KEY_HOLD = 0.05       # Sekunden, die die Taste gedrückt bleibt (>= 2 Spiel-Frames)
+KEY_MODE = "vk"   # "postmessage" = direkt ans TD2-Fenster (Test), "vk", "both", "scancode" = ueber SendInput
 
 # Scancodes Ziffernblock
 SC_NUM_PLUS = 0x4E    # Num+
@@ -89,6 +85,14 @@ SC_NUM_9 = 0x49
 SC_NUM_DOT = 0x53     # Num .
 SC_SPACE = 0x39       # Leertaste
 SC_T = 0x14           # Taste T
+
+# Scancode -> virtueller Tastencode (fuer KEY_MODE "both"/"vk")
+SC_TO_VK = {
+    SC_NUM_PLUS: 0x6B, SC_NUM_MINUS: 0x6D, SC_NUM_DIV: 0x6F, SC_NUM_MUL: 0x6A,
+    SC_NUM_0: 0x60, SC_NUM_1: 0x61, SC_NUM_2: 0x62, SC_NUM_3: 0x63, SC_NUM_4: 0x64,
+    SC_NUM_5: 0x65, SC_NUM_6: 0x66, SC_NUM_7: 0x67, SC_NUM_8: 0x68, SC_NUM_9: 0x69,
+    SC_NUM_DOT: 0x6E, SC_SPACE: 0x20, SC_T: 0x54,
+}
 
 KEY_NAMES = {
     SC_NUM_PLUS: "Num+", SC_NUM_MINUS: "Num-", SC_NUM_DIV: "Num/", SC_NUM_MUL: "Num*",
@@ -159,14 +163,49 @@ _user32 = ctypes.WinDLL("user32", use_last_error=True) if sys.platform == "win32
 def _key_event(scancode, up=False, extended=False):
     inp = INPUT()
     inp.type = INPUT_KEYBOARD
-    inp.u.ki.wScan = scancode
-    inp.u.ki.dwFlags = (KEYEVENTF_SCANCODE | (KEYEVENTF_KEYUP if up else 0)
-                        | (KEYEVENTF_EXTENDEDKEY if extended else 0))
+    flags = (KEYEVENTF_KEYUP if up else 0) | (KEYEVENTF_EXTENDEDKEY if extended else 0)
+    vk = SC_TO_VK.get(scancode, 0)
+    if KEY_MODE == "scancode" or vk == 0:
+        inp.u.ki.wScan = scancode
+        flags |= KEYEVENTF_SCANCODE
+    elif KEY_MODE == "vk":
+        inp.u.ki.wVk = vk
+    else:  # "both": wie eine echte Tastatur – VK und Scancode zusammen
+        inp.u.ki.wVk = vk
+        inp.u.ki.wScan = scancode
+    inp.u.ki.dwFlags = flags
     _user32.SendInput(1, ctypes.byref(inp), ctypes.sizeof(INPUT))
+
+
+WM_KEYDOWN = 0x0100
+WM_KEYUP = 0x0101
+_game_hwnd_cache = {"hwnd": None, "t": 0.0}
+
+
+def _post_key(scancode, up, extended):
+    """Tastenmeldung direkt in die Fensterwarteschlange von TD2 legen (ohne SendInput)."""
+    now = time.time()
+    if _game_hwnd_cache["hwnd"] is None or now - _game_hwnd_cache["t"] > 2.0:
+        _game_hwnd_cache["hwnd"] = find_game_window()
+        _game_hwnd_cache["t"] = now
+    hwnd = _game_hwnd_cache["hwnd"]
+    if not hwnd:
+        return False
+    vk = SC_TO_VK.get(scancode, 0)
+    lparam = 1 | (scancode << 16) | ((1 << 24) if extended else 0)
+    if up:
+        lparam |= 0xC0000000
+    _user32.PostMessageW(hwnd, WM_KEYUP if up else WM_KEYDOWN, vk, lparam)
+    return True
 
 
 def tap(scancode, extended=False):
     if not SEND_KEYS or _user32 is None:
+        return
+    if KEY_MODE == "postmessage":
+        _post_key(scancode, False, extended)
+        time.sleep(KEY_HOLD)
+        _post_key(scancode, True, extended)
         return
     _key_event(scancode, up=False, extended=extended)
     time.sleep(KEY_HOLD)
@@ -475,7 +514,7 @@ def main():
     loco_name = DEFAULT_LOCO
     print(f"Lok: {loco_name} – {STEPS} Stufen aktiv (Feder im Gerät). Strg+C zum Beenden.")
     print(f"Menü: Taste '{MENU_KEY.upper()}' in diesem Fenster -> Lok wechseln.")
-    print("Tasten:", "Num+ / Num- werden gesendet" if SEND_KEYS else "AUS (nur Anzeige)")
+    print("Tasten:", f"Num+ / Num- werden gesendet (Modus {KEY_MODE})" if SEND_KEYS else "AUS (nur Anzeige)")
     print(f"Fokus: Tasten gehen nur raus, wenn {GAME_EXE} im Vordergrund ist.")
     print(f"Resync: G29-Knopf {RESYNC_BUTTON} -> Fahrschalter im Spiel auf 0 fahren und auf Radstufe setzen.")
     print("Knöpfe: " + ", ".join(f"{b} -> {KEY_NAMES.get(sc, hex(sc))}" for b, (sc, _) in sorted(BUTTON_KEYS.items())))
