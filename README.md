@@ -1,8 +1,6 @@
 # G29 Fahrschalter für Train Driver 2 – Anleitung
 
-Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die polnischen E-Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
-
-Du musst nichts programmieren. Einmal einrichten, danach reicht ein Doppelklick.
+Mit diesem kleinen Programm wird dein Logitech G29 Lenkrad zum Fahrschalter für die Loks in Train Driver 2. Das Lenkrad rastet spürbar von Stufe zu Stufe, wichtige Übergänge (z. B. 0 → 1 oder in die Dauerfahrstufen) gehen schwerer, und jede Raststufe wird automatisch als Tastendruck ans Spiel geschickt. Die Knöpfe am Lenkrad übernehmen weitere Funktionen, die LED-Leiste zeigt die Feldschwächung an.
 
 ---
 
@@ -32,13 +30,12 @@ Lege diese drei Dateien zusammen in einen Ordner, z. B. `C:\G29-TD2\`:
 
 - `Start.bat` – zum Starten doppelklicken
 - `g29_detent_test.py` – das eigentliche Programm
-- `Anleitung.md` – diese Anleitung
 
 ## 4. G HUB einstellen
 
 Öffne G HUB, wähle das G29 und stelle ein:
 
-- **Lenkbereich (Operating Range): 900°** – je größer, desto mehr Platz haben die Stufen
+- **Lenkbereich (Operating Range): 400°** – Ich habs zumindest mit 400 getestet und bin so happy damit.
 - **Force Feedback / Kraftrückmeldung: 100 %**
 - Zentrierfeder (Centering Spring) **aus**, falls vorhanden
 
@@ -62,9 +59,9 @@ Das Programm weiß nicht, wo der Fahrschalter in der Lok gerade steht. Deshalb d
 
 - Das Rad dreht sich von selbst ganz nach links auf Stufe 0. **Rad dabei loslassen!**
 - Gleichzeitig wird der Fahrschalter im Spiel auf 0 gefahren.
-- Die LED-Leiste blinkt kurz, danach passt alles zusammen.
+- Die LED-Leiste blinkt kurz wenn abgeschlossen.
 
-Immer wenn Rad und Spiel auseinandergelaufen sind (z. B. nach einem Lokwechsel), einfach wieder Resync drücken.
+Es kann sein das das Lenkrad nicht komplett in Stufe 0 einrastet, dann einfach manuell in 0 bringen.
 
 ## 7. Lok wechseln
 
